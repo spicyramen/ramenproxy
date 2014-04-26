@@ -1,25 +1,92 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.mobicents.servlet.sip.examples</groupId>
-		<artifactId>sip-servlets-examples-parent</artifactId>
-		<version>0.0.1-Cristiano</version>
-		<relativePath>../pom.xml</relativePath>
-	</parent>
+	<groupId>org.mobicents.servlet.sip</groupId>
+	<version>0.0.1-Cristiano</version>
 	<artifactId>sip-servlets-pbx</artifactId>
 	<packaging>war</packaging>
 	<name>ramenproxy</name>
 	<url>https://github.com/spicyramen/ramenproxy</url>
 	
+	<ciManagement>
+		<system>Jenkins</system>
+		<url>https://mobicents.ci.cloudbees.com/job/Mobicents-SipServlets-Testsuite/</url>
+	</ciManagement>
+
+	<licenses>
+		<license>
+			<name>GNU LESSER GENERAL PUBLIC LICENSE</name>
+			<url>http://www.gnu.org/licenses/lgpl.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<scm>
+		<connection>scm:git:https://code.google.com/p/sipservlets/</connection>
+		<developerConnection>scm:git:https://code.google.com/p/sipservlets/</developerConnection>
+		<url>https://code.google.com/p/sipservlets/</url>
+	</scm>
+
+
 	<build>
 		<plugins>
 			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
 				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
+					<allowTimestampedSnapshots>true</allowTimestampedSnapshots>
+					<preparationGoals>clean install</preparationGoals>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<arguments>-Dmaven.test.skip</arguments>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<compilerArguments>
+						<g />
+					</compilerArguments>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>2.0-beta-6</version>
+			</plugin>
+			<plugin>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<groupId>org.mobicents.tools</groupId>
+				<version>${mobicents.tools.mavenplugin.eclipse.version}</version>
+				<inherited>false</inherited>
+				<executions />
+				<configuration>
+					<!--generateProjectsForModules>true</generateProjectsForModules -->
+					<resolveTransitiveDependencies>true</resolveTransitiveDependencies>
+					<eclipseProjectName>sip-servlets-bootstrap</eclipseProjectName>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.4.1</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>${basedir}</directory>
+							<includes>
+								<include>$${**}/</include>
+								<include>bin/</include>
+							</includes>
+							<followSymlinks>false</followSymlinks>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+
+
 			<plugin>
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
@@ -32,6 +99,14 @@
 		</plugins>		
 	</build>
 	
+	<properties>
+		<mobicents.tools.mavenplugin.eclipse.version>1.0.0.FINAL</mobicents.tools.mavenplugin.eclipse.version>
+		<mobicents.cluster.version>1.14.0.FINAL</mobicents.cluster.version>
+		<mobicents.balancer.version>1.7.0-SNAPSHOT</mobicents.balancer.version>
+		<mobicents.jain.sip.ha.version>1.5.0-SNAPSHOT</mobicents.jain.sip.ha.version>
+		<mobicents.jain.sip.ext.version>1.2.0.FINAL</mobicents.jain.sip.ext.version>
+	</properties>
+
 	<dependencies>
 		
 		<!-- Utils dependency -->
@@ -52,6 +127,64 @@
         		<artifactId>hsqldb</artifactId>
         		<version>1.8.0.10</version>
       	</dependency>
+
+      	<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<!-- mysql dependencies -->
+		<dependency>
+		<groupId>mysql</groupId>
+		<artifactId>mysql-connector-java</artifactId>
+		<version>5.1.23</version>
+		</dependency>
+		
+		<!-- logging dependency -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.16</version>
+			<scope>provided</scope>
+		</dependency>
+		
+
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
+		</dependency>
+
+   		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging-api</artifactId>
+			<version>1.1.1</version>
+			<scope>provided</scope>
+		</dependency>	
+
+		<!-- j2ee dependencies -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mobicents.servlet.sip</groupId>
+			<artifactId>sip-servlets-spec</artifactId>
+			<version>2.1.0-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>		
+		<dependency>
+			<groupId>org.mobicents.servlet.sip</groupId>
+			<artifactId>sip-servlets-client</artifactId>
+			<version>2.1.0-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>	
+
 	</dependencies>	
 
 	<!-- repositories -->
